@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>CAOSino - Tibia 6-Reel Edition</title>
+<style>
+*{box-sizing:border-box}
+body{background:#0b0d0f url('tlo.jpg') no-repeat center center fixed;background-size:cover;color:#d1d5db;font-family:'Verdana','Arial',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;margin:0;user-select:none;overflow:hidden;position:relative}
+#fire-container{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;overflow:hidden}
+.ambient-fire{position:absolute;width:130px;height:130px;background:url('fire-field-tibia.gif') no-repeat center center;background-size:contain;image-rendering:pixelated;filter:drop-shadow(0 0 10px #ff3300);animation:fireFlicker 1.5s infinite alternate ease-in-out;opacity:.85}
+@keyframes fireFlicker{from{transform:scale(1)}to{transform:scale(1.08)}}
+#bonus-hud{background:rgba(20,22,24,.92);border:2px solid #f39c12;border-radius:6px;padding:10px 15px;display:flex;flex-direction:column;gap:6px;box-shadow:0 0 15px rgba(0,0,0,.8)}
+.hud-title{font-size:11px;color:#f39c12;font-weight:bold;text-transform:uppercase;border-bottom:1px solid #444;padding-bottom:3px;text-align:center}
+.hud-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:bold;gap:10px}
+.hud-badge{background:#111214;padding:2px 6px;border-radius:3px;border:1px solid #333;color:#0f0;font-size:11px}
+.header-section{display:flex;flex-direction:column;align-items:center;margin:5px 0 10px;z-index:10}
+.logo-title{font-size:48px;font-weight:bold;text-transform:uppercase;letter-spacing:3px;color:#f39c12;text-shadow:2px 2px 0 #000,-2px -2px 0 #000;margin:0}
+.history-box{background:rgba(24,26,28,.95);border:2px solid #4a4e53;border-radius:4px;padding:6px 15px;margin-top:6px;display:flex;align-items:center;gap:12px;box-shadow:inset 0 0 8px #000;min-width:480px;justify-content:center}
+.history-title{font-size:11px;color:#f39c12;font-weight:bold;text-transform:uppercase}
+.history-list{display:flex;gap:8px;font-size:12px;font-weight:bold}
+.history-item{background:#111214;padding:3px 8px;border-radius:3px;border:1px solid #333;color:#0f0}
+.dashboard{display:flex;gap:15px;font-size:16px;margin-bottom:10px;background:#1c1e20;padding:8px 20px;border:2px solid #4a4e53;border-radius:4px;box-shadow:inset 0 0 8px #000;align-items:center;z-index:10}
+.bet-box{background:#282c30;padding:4px 10px;border-radius:4px;border:1px solid #5a5e63;text-align:center}
+.bet-selector-list{display:flex;gap:5px;margin-top:2px}
+.bet-badge{background:#111214;padding:2px 5px;border-radius:3px;font-size:11px;color:#777;border:1px solid #333;cursor:pointer}
+.bet-badge.active{background:#f39c12;color:#000;font-weight:bold}
+.slot-machine{display:flex;gap:12px;background:#181a1c;padding:15px;border-radius:6px;border:3px solid #3e4247;box-shadow:inset 0 0 15px #000;position:relative;z-index:10}
+.reel-container{display:flex;flex-direction:column;align-items:center}
+.reel-strip{width:100px;height:380px;background:#0f1012;border:2px solid #5a5e63;border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:space-around;overflow:hidden;box-shadow:inset 0 0 15px #000}
+.slot-item{width:72px;height:72px;display:flex;align-items:center;justify-content:center;transition:all .2s ease}
+.slot-item.top-item,.slot-item.bottom-item{transform:scale(.85);filter:brightness(.6)}
+.slot-item.center-item{transform:scale(1.05);filter:brightness(1.1);z-index:2}
+.slot-item.win-cell img{filter:drop-shadow(0 0 10px #0f0) brightness(1.4)!important;transform:scale(1.25)}
+.slot-item img{width:64px;height:64px;image-rendering:pixelated}
+.hold-btn{margin-top:8px;padding:5px 10px;font-size:12px;font-weight:bold;background:#2b2e32;color:#888;border:1px solid #4a4e53;border-radius:3px;cursor:pointer}
+.hold-btn.active{background:#c0392b;color:#fff;border-color:#f39c12;box-shadow:0 0 8px #c0392b}
+.controls-hint{margin-top:12px;color:#aaa;font-size:12px;text-align:center;background:#181a1c;padding:6px 16px;border-radius:4px;border:1px solid #3e4247;z-index:10}
+.controls-hint key{color:#f39c12;font-weight:bold}
+#raid-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,0,0,.88);z-index:250;display:none;flex-direction:column;align-items:center;justify-content:center;border:4px solid #c0392b}
+.raid-box{background:#1c1e20;border:3px solid #e74c3c;padding:25px 40px;border-radius:8px;text-align:center;box-shadow:0 0 30px #c0392b;display:flex;flex-direction:column;align-items:center;gap:12px}
+.raid-box h2{color:#e74c3c;margin:0;font-size:24px;text-transform:uppercase}
+.raid-monster-img{width:96px;height:96px;image-rendering:pixelated}
+.caos-speech{background:#1a252f;color:#0ff;font-size:12px;font-weight:bold;padding:6px 12px;border-radius:6px;border:2px solid #3498db;box-shadow:0 0 15px #3498db;margin-bottom:8px;white-space:nowrap}
+.ferumbras-speech{background:#2c3e50;color:#e74c3c;font-size:14px;font-weight:bold;padding:8px 16px;border-radius:8px;border:2px solid #e74c3c;box-shadow:0 0 20px #e74c3c;text-align:center;margin-bottom:10px;font-style:italic}
+.npc-img-style{width:80px;height:80px;image-rendering:pixelated}
+.speech-bubble{position:relative;background:#fff8dc;color:#000;font-size:13px;font-weight:bold;padding:10px 15px;border-radius:8px;border:2px solid #8b4513;box-shadow:2px 2px 8px rgba(0,0,0,.7);max-width:260px}
+#info-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(11,13,15,.9);z-index:300;display:none;align-items:center;justify-content:center}
+.info-box{background:#1c1e20;border:3px solid #f39c12;width:760px;max-height:88vh;border-radius:8px;padding:20px 30px;box-shadow:0 0 30px rgba(0,0,0,.9);overflow-y:auto;color:#d1d5db}
+.info-box h2{color:#f39c12;text-align:center;margin-top:0;text-transform:uppercase}
+.info-section-title{color:#0f0;font-size:15px;margin-top:15px;margin-bottom:5px;border-bottom:1px solid #444;padding-bottom:3px}
+.info-table{width:100%;font-size:12px;border-collapse:collapse;margin-top:5px}
+.info-table th,.info-table td{border:1px solid #3e4247;padding:5px 10px;text-align:left}
+.info-table th{background:#25282a;color:#f39c12}
+.close-info-btn{display:block;margin:20px auto 0;background:#f39c12;color:#000;border:none;padding:8px 25px;font-weight:bold;font-size:14px;border-radius:4px;cursor:pointer}
+#win-overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center}
+#win-overlay img{max-width:220px;max-height:220px;filter:drop-shadow(0 0 20px #f39c12);animation:popupBounce .5s ease-out}
+@keyframes popupBounce{0%{transform:scale(0);opacity:0}50%{transform:scale(1.2);opacity:1}100%{transform:scale(1);opacity:1}}
+
+body{padding:0 275px}
+#right-panel{position:fixed;top:12px;right:12px;width:262px;max-height:calc(100vh - 24px);overflow-y:auto;display:flex;flex-direction:column;gap:10px;z-index:100}
+.history-box{min-width:0;flex-direction:column;align-items:stretch;gap:6px;margin-top:0}
+.history-list{flex-direction:column;gap:4px}
+.controls-hint{margin-top:0;text-align:left;line-height:1.7;background:rgba(24,26,28,.95);border:2px solid #4a4e53}
+.credits-panel{background:#1c1e20;border:2px solid #f39c12;border-radius:4px;padding:10px;text-align:center;font-size:15px;box-shadow:inset 0 0 8px #000}
+.credits-panel #credits{display:block;color:#0f0;font-size:28px;font-weight:bold;margin-top:2px}
+#npc-column{position:fixed;left:15px;top:10px;bottom:10px;width:250px;display:flex;flex-direction:column;justify-content:space-evenly;align-items:center;z-index:90;pointer-events:none}
+.npc-slot{display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0;transform:translateX(-300px);transition:all .6s cubic-bezier(.175,.885,.32,1.275)}
+.npc-slot.visible{opacity:1;transform:translateX(0)}
+.npc-slot .speech-bubble{max-width:230px;text-align:center}
+.npc-slot .speech-bubble:before{content:'';position:absolute;top:-8px;left:50%;margin-left:-6px;border:6px solid transparent;border-top:0;border-bottom:8px solid #fff8dc}
+.ferumbras-speech{max-width:240px}
+.raid-card{width:120px;height:140px;background:linear-gradient(#2c3e50,#1a252f);border:3px solid #f39c12;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:8px;font-size:46px;transition:transform .2s,box-shadow .2s}
+.raid-card:hover{transform:scale(1.07);box-shadow:0 0 18px #f39c12}
+.raid-card small{font-size:11px;color:#bbb;font-weight:bold}
+.raid-card.revealed{cursor:default;transform:none}
+.raid-card.win{border-color:#2ecc71;background:#12361f}
+.raid-card.lose{border-color:#e74c3c;background:#3a1212}
+.raid-card.chosen{box-shadow:0 0 22px #fff}
+
+.slot-item.row-1,.slot-item.row-3{transform:scale(.92);filter:brightness(.8)}
+#caos-container{position:fixed;bottom:12px;left:50%;transform:translate(-50%,90px);opacity:0;display:flex;flex-direction:column;align-items:center;z-index:95;pointer-events:none;transition:all .6s cubic-bezier(.175,.885,.32,1.275)}
+#caos-container.visible{opacity:1;transform:translate(-50%,0)}
+.bet-panel{background:#1c1e20;border:2px solid #4a4e53;border-radius:4px;padding:8px;display:flex;flex-direction:column;gap:6px;box-shadow:inset 0 0 8px #000}
+.bl{font-size:11px;color:#aaa}
+.music-btn{width:100%;background:#2b2e32;color:#f39c12;border:1px solid #4a4e53;border-radius:3px;padding:8px;font-weight:bold;font-size:12px;cursor:pointer;font-family:inherit}
+.music-btn:hover{border-color:#f39c12}
+#mb-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(10,0,20,.88);z-index:250;display:none;flex-direction:column;align-items:center;justify-content:center;border:4px solid #9b59b6}
+#mb-overlay .raid-box{border-color:#9b59b6;box-shadow:0 0 30px #9b59b6}
+#mb-overlay .raid-box h2{color:#c39bd3}
+#login-screen{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1000;background:url('ekran_logowania.png') no-repeat center/contain,url('ekran%20logowania.png') no-repeat center/contain #fff;transition:opacity .5s}
+#login-fallback{display:none;position:absolute;top:40%;left:0;width:100%;text-align:center;font-size:90px;font-weight:bold;color:#000}
+.pin-box{position:absolute;top:66%;left:50%;transform:translateX(-50%);text-align:center}
+#pin-input{width:200px;font-size:30px;letter-spacing:14px;text-align:center;border:3px solid #000;border-radius:8px;background:#fff;color:#000;padding:8px 0 8px 14px;outline:none;font-family:inherit}
+#pin-input:focus{border-color:#f39c12}
+#pin-msg{height:20px;margin-top:8px;color:#c0392b;font-size:13px;font-weight:bold}
+.shake{animation:shake .35s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+</style>
+</head>
+<body>
+<div id="login-screen">
+  <div id="login-fallback">CAOSino</div>
+  <div class="pin-box">
+    <input id="pin-input" type="password" inputmode="numeric" maxlength="4" placeholder="PIN" autocomplete="off" autofocus oninput="onPinInput()" onkeydown="if(event.key==='Enter')tryLogin()">
+    <div id="pin-msg"></div>
+  </div>
+  <img src="ekran_logowania.png" alt="" style="display:none" onerror="if(!this.dataset.t){this.dataset.t=1;this.src='ekran%20logowania.png'}else{document.getElementById('login-fallback').style.display='block'}">
+</div>
+<div id="fire-container"></div>
+
+<div id="raid-overlay"><div class="raid-box">
+  <h2 id="raid-title">NAJAZD!</h2>
+  <img class="raid-monster-img" id="raid-img" src="" alt="Monstrum">
+  <div id="raid-desc" style="font-size:14px;font-weight:bold;color:#fff"></div>
+  <div style="display:flex;gap:24px;margin:6px 0">
+    <div class="raid-card" id="raid-card-0" onclick="pickRaidCard(0)"></div>
+    <div class="raid-card" id="raid-card-1" onclick="pickRaidCard(1)"></div>
+  </div>
+  <div id="raid-status" style="font-size:13px;color:#f39c12;margin-top:5px;max-width:380px">Wybierz jedno z dwóch pól!</div>
+</div></div>
+
+<div id="mb-overlay"><div class="raid-box">
+  <h2>🎵 ZNALEZIONO MUSIC BOX! 🎵</h2>
+  <img class="raid-monster-img" src="music_box_chayenne.gif" alt="Music Box">
+  <div style="font-size:14px;font-weight:bold;color:#fff;max-width:400px">Otwórz jedną z dwóch kart! Może kryć 500–1000 CAOSCOIN... albo najazd Necromancerów!</div>
+  <div style="display:flex;gap:24px;margin:6px 0">
+    <div class="raid-card" id="mb-card-0" onclick="pickMbCard(0)"></div>
+    <div class="raid-card" id="mb-card-1" onclick="pickMbCard(1)"></div>
+  </div>
+  <div id="mb-status" style="font-size:13px;color:#f39c12;margin-top:5px;max-width:380px">Wybierz kartę!</div>
+</div></div>
+<div id="right-panel">
+<div id="bonus-hud">
+  <div class="hud-title">Błogosławieństwa & Status</div>
+  <div class="hud-row"><span>💎 Life Crystal:</span><span class="hud-badge" id="hud-crystal">0/10</span></div>
+  <div class="hud-row"><span>🧊 Ice Cube:</span><span class="hud-badge" id="hud-ice" style="color:#0ff">0/6</span></div>
+  <div class="hud-row" id="hud-essence-row" style="display:none;color:#9b59b6"><span>🩸 Demonic Essence:</span><span class="hud-badge" id="hud-essence-val">+10%</span></div>
+  <div class="hud-row" id="hud-scarab-row" style="display:none;color:#e67e22"><span>🦂 Scarab Amulet:</span><span class="hud-badge" id="hud-scarab-charges">2 wygrane</span></div>
+  <div class="hud-row" id="hud-bluegem-row" style="display:none;color:#3498db"><span>🔮 Blue Gem (-20% Rajd):</span><span class="hud-badge" style="color:#3498db">AKTYWNY</span></div>
+  <div class="hud-row" id="hud-goldring-row" style="display:none;color:#f1c40f"><span>💍 Gold Ring (90% Caos):</span><span class="hud-badge" style="color:#f1c40f">1 spin</span></div>
+  <div class="hud-row" id="hud-boost-row" style="display:none;color:#2ecc71"><span>🚀 Wygrana +50%:</span><span class="hud-badge" id="hud-boost-spins">30 sp.</span></div>
+  <div class="hud-row" id="hud-freeze-row" style="display:none;color:#3498db"><span>❄️ Zamrożenie Salda:</span><span class="hud-badge" id="hud-freeze-spins" style="color:#0ff">5 sp.</span></div>
+  <div class="hud-row" id="hud-invasion-row" style="display:none;color:#e74c3c"><span>☣️ INWAZJA MIASTA:</span><span class="hud-badge" id="hud-invasion-spins" style="color:#e74c3c">40 sp.</span></div>
+  <div class="hud-title" style="margin-top:4px">Szanse (po przegranym spinie)</div>
+  <div class="hud-row"><span>⚔️ Najazd:</span><span class="hud-badge" id="hud-raid-chance" style="color:#e74c3c">0%</span></div>
+  <div class="hud-row"><span>🌀 Caos:</span><span class="hud-badge" id="hud-caos-chance" style="color:#0ff">5%</span></div>
+  <div class="hud-row"><span>🎯 Szansa trafienia (linia):</span><span class="hud-badge" id="hud-hit-chance">0%</span></div>
+</div>
+<div class="history-box">
+  <div class="history-title">OSTATNIE WYGRANE:</div>
+  <div class="history-list" id="history-list"><span style="color:#777;font-size:11px">Brak wygranych</span></div>
+</div>
+<div id="controls-hint" class="controls-hint">
+  <b style="color:#f39c12">STEROWANIE</b><br>
+  <key>[SPACJA]</key> Zakręć<br><key>[1]-[6]</key> Hold<br><key>[C]</key> Stawka<br><key>[L]</key> Linie<br><key>[R]</key> Reset<br><key>[I]</key> Instrukcja<br><key>[M]</key> Muzyka
+</div>
+<button id="music-btn" class="music-btn" onclick="toggleMusic()">🔊 Muzyka: WŁ [M]</button>
+<div class="credits-panel">CAOSCOIN<span id="credits">1000</span></div>
+<div class="bet-panel">
+  <div class="bet-box"><div class="bl">LINIE: <span id="lines-count" style="color:#0f0;font-weight:bold;font-size:14px">1</span>/20</div><div class="bet-selector-list" id="lines-list"></div></div>
+  <div class="bet-box"><div class="bl">STAWKA/LINIA: <span id="bet" style="color:#f39c12;font-size:16px">10</span></div><div class="bet-selector-list" id="bet-list"></div></div>
+  <div class="bet-box"><div class="bl">RAZEM NA SPIN: <span id="total-bet" style="color:#f39c12;font-size:16px">10</span> CC</div></div>
+</div>
+</div>
+<div id="info-modal"><div class="info-box">
+  <h2>CAOSino - Instrukcja, Błogosławieństwa i Najazdy</h2>
+
+  <div class="info-section-title">🎰 Zasady wygranych</div>
+  <p style="font-size:12px;margin:5px 0">
+    • Maszyna ma <b>6 bębnów</b> i do <b>20 linii</b> (przycisk [L] lub pola LINIE: 1 / 5 / 10 / 15 / 20), po 5 przedmiotów na bęben. Wszystkie aktywne linie są liczone naraz.<br>
+    • Wygrana = identyczne przedmioty od <b>lewej strony</b> linii: 2, 3, 4, 5 lub 6 z rzędu.<br>
+    • Wypłata = stawka × mnożnik przedmiotu × mnożnik długości (tabela niżej).<br>
+    • Stawki: 5 / 10 / 20 / 50 / 80 / 100 CC na linię.
+  </p>
+  <table class="info-table" id="len-table"></table>
+
+  <div class="info-section-title">📊 Szanse wypadnięcia przedmiotu (na jedno pole)</div>
+  <table class="info-table" id="drop-table"></table>
+
+  <div class="info-section-title">⚔️ Najazdy (Rotwormy / Necromancerzy)</div>
+  <p style="font-size:12px;margin:5px 0">
+    • Najazd może wystąpić tylko po przegranym spinie. Szanse są niskie, ale <b>rosną ze stawką i liczbą linii</b>:<br>
+    &nbsp;&nbsp;bazowo 0.30% + 0.004% za każdy 1 CC stawki + 0.05% za każdą dodatkową linię (maks. 3%).<br>
+    • Po najeździe działa blokada 25 spinów bez kolejnego najazdu.<br>
+    • W najeździe wybierasz jedno z 2 zakrytych pól [1]/[2] (50/50): pod jednym jest zwycięstwo (+300 CC), pod drugim klęska. Scarab Amulet gwarantuje zwycięstwo.<br>
+    • Przegrany rajd blokuje bębny grafikami potworów na 40 spinów. <b>Necromancerzy</b> dodatkowo zabierają Ice Cubes i Błogosławieństwa.
+  </p>
+
+  <div class="info-section-title">🔮 Przedmioty Błogosławieństw (Ferumbras)</div>
+  <p style="font-size:12px;margin:5px 0">
+    • Rzadkie: łącznie ok. 3% na spin, maks. jedno błogosławieństwo na spin.<br>
+    • <b>Demonic Essence:</b> +10% wygranych za sztukę (max +30%).<br>
+    • <b>Scarab Amulet:</b> +2 ładunki, gwarantuje wygraną w walce z rajdem (max 4).<br>
+    • <b>Blue Gem:</b> obniża szansę na najazd o 20%.<br>
+    • <b>Gold Ring:</b> szansa na Caosa 90% na 1 spin.<br>
+    • <b>Ice Cube:</b> 6 sztuk = +500 CC i zgaszenie ognia. <b>Life Crystal:</b> 10 sztuk = +50% wygranych na 30 spinów.<br>
+    • <b>Music Box 🎵:</b> ekstremalnie rzadki (ok. 0,2% na spin). Dwie karty: 500–1000 CC albo najazd Necromancerów.
+  </p>
+  <button class="close-info-btn" onclick="toggleInfoModal()">ZAMKNIJ [I]</button>
+</div></div>
+
+<div id="npc-column">
+  <div class="npc-slot" id="ferumbras-container"><div class="ferumbras-speech" id="ferumbras-text">Exori Vis Benedictio!</div><img class="npc-img-style" src="ferumbras.gif" alt="Ferumbras" onerror="this.src='rashid-tibia.gif'"></div>
+  <div class="npc-slot" id="npc-container"><img class="npc-img-style" src="rashid-tibia.gif" alt="Rashid"><div class="speech-bubble" id="npc-text">Witaj travelerze!</div></div>
+  <div class="npc-slot" id="norma-container"><img class="npc-img-style" src="Norma.gif" alt="Norma"><div class="speech-bubble" id="norma-text">Słuchaj dobrych rad!</div></div>
+</div>
+<div id="caos-container"><div class="caos-speech">BAD CAOS: BALANCE FROZEN</div><img class="npc-img-style" src="CAOS.gif" alt="Caos" onerror="if(!this.dataset.t){this.dataset.t=1;this.src='caos.gif'}else{this.src='rashid-tibia.gif'}"></div>
+<div id="win-overlay"><img id="win-gif" src="" alt="WYGRANA"></div>
+
+<div class="header-section">
+  <h1 class="logo-title">CAOSino</h1>
+</div>
+
+
+<div class="slot-machine" id="slot-machine"></div>
+
+
+<script>
+const NREELS = 6, NROWS = 5;
+
+/* ---------- AUDIO ---------- */
+let soundMusicBox,bgMusic,soundRaid,soundSpin,soundWin,soundClick,soundNewFire,soundResetFire,soundHold1,soundHold2,soundCaosFreeze,soundNpcReward,soundBlessingMusic;
+let holdSoundToggle=false;
+let loggedIn=false, musicOn=true, bgDuck=false;
+const PIN='1960';
+function applyMusicVolume(){ if(bgMusic) bgMusic.volume=bgDuck?0.05:0.3; }
+function duck(on){ bgDuck=on; applyMusicVolume(); }
+function startMusic(){ if(bgMusic&&musicOn){ applyMusicVolume(); bgMusic.play().catch(()=>{}); } }
+function updateMusicBtn(){ const b=document.getElementById('music-btn'); if(b) b.innerText=musicOn?'🔊 Muzyka: WŁ [M]':'🔇 Muzyka: WYŁ [M]'; }
+function toggleMusic(){ initAudio(); musicOn=!musicOn; if(musicOn) startMusic(); else if(bgMusic) bgMusic.pause(); updateMusicBtn(); }
+function onPinInput(){ const i=document.getElementById('pin-input'); i.value=i.value.replace(/\D/g,''); if(i.value.length===4) tryLogin(); }
+function tryLogin(){
+  const i=document.getElementById('pin-input'), m=document.getElementById('pin-msg'), ls=document.getElementById('login-screen');
+  if(i.value===PIN){
+    loggedIn=true; ls.style.opacity=0; setTimeout(()=>ls.style.display='none',500);
+    initAudio(); startMusic(); updateUI();
+  } else {
+    m.innerText='Błędny PIN'; i.value=''; i.classList.remove('shake'); void i.offsetWidth; i.classList.add('shake');
+  }
+}
+/* Ładuje dźwięk, próbując kolejno kilku wariantów nazwy (pojedyncze/podwójne podkreślniki) */
+function loadAudio(names){
+  /* najpierw próbuje wersji .mp3 (po konwersji), potem oryginalnych rozszerzeń */
+  const mp3=names.filter(n=>/\.(wav|aiff|ogg)$/i.test(n)).map(n=>n.replace(/\.[^.]+$/,'.mp3'));
+  names=mp3.concat(names);
+  const a=new Audio(); let i=0;
+  a.preload='auto';
+  a.addEventListener('error',()=>{ i++; if(i<names.length){ a.src=encodeURI(names[i]); a.load(); } });
+  a.src=encodeURI(names[0]);
+  return a;
+}
+function initAudio(){
+  try{
+    if(!soundSpin){
+      soundSpin=loadAudio(['352208__inspectorj__smashing-wooden-fence-c.wav','352208_inspectorj_smashing-wooden-fence-c.wav']);
+      soundWin=loadAudio(['win.mp3','win.wav']);
+      soundClick=loadAudio(['click.mp3','click.wav']);
+      soundNewFire=loadAudio(['730704__newlocknew__fireburn_campfirecloselongcracklingflame-roarsqueackhiss.wav','730704_newlocknew_fireburn_campfirecloselongcracklingflame-roarsqueackhiss.wav']);
+      soundResetFire=loadAudio(['104990__robinhood76__02144-close-wather-plushes.wav','104990__robinhood76_02144-close-wather-plushes.wav']);
+      soundHold1=loadAudio(['688048__faragilus__ululu-dark-mage-casting-a-spell.ogg','688048_faragilus_ululu-dark-mage-casting-a-spell.ogg','848661__mikiko850__water-impact-magic-spell.wav']);
+      soundHold2=loadAudio(['848661__mikiko850__water-impact-magic-spell.wav','848661_mikiko850_water-impact-magic-spell.wav']);
+      soundCaosFreeze=loadAudio(['516911__xythe__snippet.wav','516911_xythe_snippet.wav']); soundCaosFreeze.loop=true;
+      soundNpcReward=loadAudio(['2539__eliasheuninck__bel1.aiff','2539_eliasheuninck_bel1.aiff','bel1.wav']);
+      soundBlessingMusic=loadAudio(['aktywacjablogoslawienstw.mp3']);
+      soundRaid=loadAudio(['rajd.mp3']);
+      soundMusicBox=loadAudio(['musicbox.mp3']);
+      bgMusic=loadAudio(['muzyka.mp3']); bgMusic.loop=true; bgMusic.volume=0.3;
+    }
+  }catch(e){ console.warn('Audio init error',e); }
+}
+function playSound(a){ if(a){ try{ a.currentTime=0; a.play().catch(()=>{}); }catch(e){} } }
+function playAlternatingHoldSound(){ initAudio(); playSound(holdSoundToggle?soundHold1:soundHold2); holdSoundToggle=!holdSoundToggle; }
+
+/* ---------- DANE ---------- */
+const latinQuotes=["Exori Vis Benedictio!","In Nomine Caos, Absolvo!","Virtus Et Gloria In Saecula!","Sanctum Arcanum Exsurge!","Benedictio Ferumbrasi Vobiscum!"];
+const translations={
+  iceCubeBonusMsg:"❄️ ZEBRANO 6 ICE CUBE! Zamrożono ogień i przyznano 500 CAOSCOIN! ❄️",
+  crystalBoostMsg:"💎 ZEBRANO 10 LIFE CRYSTAL! +50% Wygranych na 30 Spinów! 💎",
+  npcQuotes:["Pusto, przyjacielu! Spróbuj ponownie.","Pechowy rzut! Może następnym razem?","Ogień rośnie! Musisz w końcu coś trafić!"],
+  normaQuotes:[
+    "Zbieraj Life Crystal... 10 sztuk da ci +50% wygranych na 30 spinów!",
+    "Caos jest dobroczynny, każdemu z nas dał cel w życiu...",
+    "Zbierz 6 kostek lodu, a zamrożą ogień pecha!",
+    "Więcej linii [L] i wyższa stawka to też większe ryzyko najazdu!",
+    "Pamiętaj o przyciskach HOLD [1]-[6], aby zablokować cenne przedmioty!"
+  ]
+};
+
+/* Wagi dobrane tak, by RTP było ok. 90-95% (bez bonusów). Błogosławieństwa bardzo rzadkie. */
+const items=[
+  {name:"Health Potion",file:"health_potion.gif",weight:30,multiplier:1},
+  {name:"Hat of the Mad",file:"hat_of_the_mad.gif",weight:22,multiplier:2},
+  {name:"SD Rune",file:"sudden_death_rune.gif",weight:17,multiplier:3},
+  {name:"Boots of Haste",file:"boots_of_haste.gif",weight:13,multiplier:5},
+  {name:"Crown Helmet",file:"crown_helmet.gif",weight:10,multiplier:7},
+  {name:"Golden Armor",file:"golden_helmet.gif",weight:7,multiplier:12},
+  {name:"Demon Shield",file:"demon_shield.gif",weight:5,multiplier:18},
+  {name:"Royal Helmet",file:"royal_helmet.gif",weight:3.5,multiplier:30},
+  {name:"Soft Boots",file:"soft_boots.gif",weight:2.5,multiplier:50},
+  {name:"MPA",file:"magic_plate_armor.gif",weight:1.5,multiplier:90},
+  {name:"Golden Helmet",file:"golden_helmet.gif",weight:0.8,multiplier:250},
+  {name:"Magic Longsword",file:"magic_longsword.gif",weight:0.4,multiplier:600},
+  {name:"Ice Cube",file:"ice_cube.gif",weight:1.0,multiplier:0,isIce:true},
+  {name:"Life Crystal",file:"life_crystal.gif",weight:1.2,multiplier:0,isCrystal:true},
+  {name:"Scarab Amulet",file:"scarab_amulet.gif",weight:0.03,multiplier:0,isScarab:true},
+  {name:"Blue Gem",file:"blue_gem.gif",weight:0.03,multiplier:0,isBlueGem:true},
+  {name:"Gold Ring",file:"gold_ring.gif",weight:0.03,multiplier:0,isGoldRing:true},
+  {name:"Demonic Essence",file:"demonic_essence.gif",weight:0.03,multiplier:0,isEssence:true},
+  {name:"Music Box",file:"music_box_chayenne.gif",weight:0.01,multiplier:0,isMusicBox:true}
+];
+const TOTAL_WEIGHT=items.reduce((a,b)=>a+b.weight,0);
+items.forEach(i=>{ i.winGif=i.file; });
+
+/* mnożnik za długość układu (od lewej) */
+const lenPay={2:1.5,3:3,4:9,5:30,6:120};
+
+/* 10 linii: numer wiersza (0=góra,1=środek,2=dół) dla każdego z 6 bębnów */
+/* 20 linii: numer wiersza (0=góra ... 4=dół) dla każdego z 6 bębnów */
+const lineRows=[[2,2,2,2,2,2],[1,1,1,1,1,1],[3,3,3,3,3,3],[0,0,0,0,0,0],[4,4,4,4,4,4],
+  [0,1,2,2,1,0],[4,3,2,2,3,4],[2,1,0,0,1,2],[2,3,4,4,3,2],[0,1,2,3,4,4],
+  [4,3,2,1,0,0],[1,0,0,0,0,1],[3,4,4,4,4,3],[1,2,3,3,2,1],[3,2,1,1,2,3],
+  [0,1,0,1,0,1],[4,3,4,3,4,3],[2,1,2,3,2,1],[1,2,1,2,1,2],[3,2,3,2,3,2]];
+const allPaylines=lineRows.map((rows,i)=>({name:'LINIA '+(i+1),rows}));
+const lineOptions=[1,5,10,15,20];
+const bets=[5,10,20,50,80,100];
+
+/* ---------- STAN ---------- */
+let currentBetIndex=1, lineIndex=0, selectedLines=1;
+let credits=1000, isSpinning=false, holds=Array(NREELS).fill(false);
+let consecutiveLosses=0, crystalCollected=0, iceCollectedThisRun=0;
+let boostSpinsLeft=0, caosFreezeSpinsLeft=0, scarabCharges=0, hasBlueGem=false, goldRingActive=false, essenceCount=0;
+let invasionSpinsLeft=0, currentInvaderFile="", raidCooldown=0;
+let lastWinsHistory=[];
+let spinsToNextNpc=Math.floor(Math.random()*8)+5, spinsToNextNorma=Math.floor(Math.random()*31)+25;
+let npcTimeout=null,normaTimeout=null,caosTimeout=null,ferumbrasTimeout=null;
+let currentReelsData=Array.from({length:NREELS},()=>[items[0],items[1],items[2],items[0],items[1]]);
+
+/* ---------- SZANSE ---------- */
+function raidChance(){
+  const bet=bets[currentBetIndex];
+  let c=0.003 + bet*0.00004 + (selectedLines-1)*0.0005;
+  c+=crystalCollected*0.0002 + iceCollectedThisRun*0.0003 + scarabCharges*0.0003 + essenceCount*0.0003;
+  if(hasBlueGem) c*=0.8;
+  if(raidCooldown>0) return 0;
+  return Math.min(c,0.03);
+}
+function caosChance(){ return goldRingActive?0.9:0.05; }
+function lineHitChance(){ // szansa na wygraną (2+ z rzędu) na jednej linii
+  let h=0;
+  items.forEach(it=>{ if(it.multiplier>0){ const p=it.weight/TOTAL_WEIGHT; h+=p*p*(1-p)+p**3*(1-p)+p**4*(1-p)+p**5*(1-p)+p**6; } });
+  return h;
+}
+const fmtPct=x=>(x*100).toFixed(x<0.1?2:0)+'%';
+
+/* ---------- BUDOWA UI ---------- */
+(function build(){
+  const m=document.getElementById('slot-machine');
+  for(let r=0;r<NREELS;r++){
+    const cls=['top-item','row-1','center-item','row-3','bottom-item'];
+    let cells=cls.map((cl,c)=>`<div class="slot-item ${cl}" id="c_${r}_${c}"><img id="r${r+1}_${c}" src="" alt="" onerror="this.src='health_potion.gif'"></div>`).join('');
+    m.insertAdjacentHTML('beforeend',`<div class="reel-container"><div class="reel-strip">${cells}</div><div id="hold${r+1}" class="hold-btn" onclick="toggleHold(${r})">[${r+1}] HOLD</div></div>`);
+  }
+  document.getElementById('bet-list').innerHTML=bets.map((b,i)=>`<div id="badge-${b}" class="bet-badge" onclick="setBet(${i})">${b}</div>`).join('');
+  document.getElementById('lines-list').innerHTML=lineOptions.map((n,i)=>`<div id="lbadge-${n}" class="bet-badge" onclick="setLines(${i})">${n}</div>`).join('');
+  document.getElementById('len-table').innerHTML='<tr><th>Układ od lewej</th>'+Object.keys(lenPay).map(k=>`<th>${k} z rzędu</th>`).join('')+'</tr><tr><td>Mnożnik długości</td>'+Object.values(lenPay).map(v=>`<td>x${v}</td>`).join('')+'</tr>';
+  document.getElementById('drop-table').innerHTML='<tr><th>Przedmiot</th><th>Szansa / pole</th><th>Mnożnik</th></tr>'+
+    items.map(i=>`<tr><td>${i.name}</td><td>${(i.weight/TOTAL_WEIGHT*100).toFixed(2)}%</td><td>${i.multiplier?('x'+i.multiplier):'błogosławieństwo / bonus'}</td></tr>`).join('');
+})();
+
+/* ---------- LOSOWANIE ---------- */
+function getRandomItem(){
+  if(invasionSpinsLeft>0 && currentInvaderFile) return {name:"Invader",file:currentInvaderFile,weight:1,multiplier:0};
+  let rand=Math.random()*TOTAL_WEIGHT, cum=0;
+  for(const it of items){ cum+=it.weight; if(rand<cum) return it; }
+  return items[0];
+}
+function genReel(){ return Array.from({length:NROWS},()=>getRandomItem()); }
+function renderReels(){
+  for(let i=0;i<NREELS;i++) for(let c=0;c<NROWS;c++) document.getElementById(`r${i+1}_${c}`).src=currentReelsData[i][c].file;
+}
+function clearWinHighlights(){
+  for(let r=0;r<NREELS;r++) for(let c=0;c<NROWS;c++){ const el=document.getElementById(`c_${r}_${c}`); if(el) el.classList.remove('win-cell'); }
+}
+function updateHistoryUI(amt,name){
+  lastWinsHistory.unshift({amt,name}); if(lastWinsHistory.length>5) lastWinsHistory.pop();
+  const l=document.getElementById('history-list'); l.innerHTML='';
+  lastWinsHistory.forEach(h=>{ const b=document.createElement('div'); b.className='history-item'; b.innerText=`+${h.amt} (${h.name})`; l.appendChild(b); });
+}
+function updateUI(){
+  const bet=bets[currentBetIndex];
+  document.getElementById('credits').innerText=credits;
+  document.getElementById('bet').innerText=bet;
+  document.getElementById('total-bet').innerText=bet*selectedLines;
+  document.getElementById('lines-count').innerText=selectedLines;
+  document.getElementById('hud-crystal').innerText=`${crystalCollected}/10`;
+  document.getElementById('hud-ice').innerText=`${iceCollectedThisRun}/6`;
+  const show=(id,on)=>document.getElementById(id).style.display=on?'flex':'none';
+  show('hud-scarab-row',scarabCharges>0); document.getElementById('hud-scarab-charges').innerText=`${scarabCharges} wygrane`;
+  show('hud-essence-row',essenceCount>0); document.getElementById('hud-essence-val').innerText=`+${essenceCount*10}%`;
+  show('hud-bluegem-row',hasBlueGem); show('hud-goldring-row',goldRingActive);
+  show('hud-boost-row',boostSpinsLeft>0); document.getElementById('hud-boost-spins').innerText=`${boostSpinsLeft} sp.`;
+  show('hud-freeze-row',caosFreezeSpinsLeft>0); document.getElementById('hud-freeze-spins').innerText=`${caosFreezeSpinsLeft} sp.`;
+  show('hud-invasion-row',invasionSpinsLeft>0); document.getElementById('hud-invasion-spins').innerText=`${invasionSpinsLeft} sp.`;
+  if(invasionSpinsLeft<=0) currentInvaderFile="";
+  document.getElementById('hud-raid-chance').innerText=raidCooldown>0?'0% (blokada '+raidCooldown+')':fmtPct(raidChance());
+  document.getElementById('hud-caos-chance').innerText=fmtPct(caosChance());
+  document.getElementById('hud-hit-chance').innerText=fmtPct(lineHitChance());
+  bets.forEach((b,i)=>document.getElementById(`badge-${b}`).classList.toggle('active',i===currentBetIndex));
+  lineOptions.forEach((n,i)=>document.getElementById(`lbadge-${n}`).classList.toggle('active',i===lineIndex));
+  if(caosFreezeSpinsLeft<=0 && !isSpinning) document.getElementById('caos-container').classList.remove('visible');
+  updateMusicBtn();
+  for(let i=0;i<NREELS;i++) document.getElementById(`hold${i+1}`).classList.toggle('active',holds[i]);
+}
+function updateFireSpread(){
+  const fc=document.getElementById('fire-container'); fc.innerHTML='';
+  let n=Math.min(Math.floor(consecutiveLosses/5),12);
+  const pos=[{top:'15%',left:'15%'},{top:'15%',right:'15%'},{top:'45%',left:'8%'},{top:'45%',right:'8%'},{top:'75%',left:'18%'},{top:'75%',right:'18%'},{top:'5%',left:'35%'},{top:'5%',right:'35%'},{top:'85%',left:'40%'},{top:'85%',right:'50%'},{top:'30%',left:'3%'},{top:'30%',right:'3%'}];
+  for(let i=0;i<n;i++){
+    const d=document.createElement('div'); d.className='ambient-fire'; const p=pos[i%pos.length];
+    if(p.top) d.style.top=p.top; if(p.left) d.style.left=p.left; if(p.right) d.style.right=p.right;
+    d.style.animationDelay=(i*0.2)+'s'; fc.appendChild(d);
+  }
+}
+
+/* ---------- POSTACIE / EFEKTY ---------- */
+function triggerFerumbrasBlessing(name){
+  const c=document.getElementById('ferumbras-container');
+  document.getElementById('ferumbras-text').innerText=`${latinQuotes[Math.floor(Math.random()*latinQuotes.length)]} (${name})`;
+  c.classList.add('visible'); initAudio(); playSound(soundBlessingMusic);
+  if(ferumbrasTimeout) clearTimeout(ferumbrasTimeout);
+  ferumbrasTimeout=setTimeout(()=>c.classList.remove('visible'),9500);
+}
+function giveRashidSupport(){ credits+=500; initAudio(); playSound(soundNpcReward); triggerNpcSpeech("Wsparcie finansowe w drodze!"); updateUI(); }
+function triggerNpcSpeech(t){
+  const c=document.getElementById('npc-container'), q=translations.npcQuotes;
+  document.getElementById('npc-text').innerText=t||q[Math.floor(Math.random()*q.length)];
+  c.classList.add('visible'); if(npcTimeout) clearTimeout(npcTimeout);
+  npcTimeout=setTimeout(()=>c.classList.remove('visible'),8500);
+}
+function triggerNormaSpeech(t){
+  const c=document.getElementById('norma-container'), q=translations.normaQuotes;
+  document.getElementById('norma-text').innerText=t||q[Math.floor(Math.random()*q.length)];
+  c.classList.add('visible'); if(normaTimeout) clearTimeout(normaTimeout);
+  normaTimeout=setTimeout(()=>c.classList.remove('visible'),9500);
+}
+function triggerCaosAppearance(){
+  document.getElementById('caos-container').classList.add('visible');
+  caosFreezeSpinsLeft=5;
+  initAudio(); playSound(soundNpcReward); playSound(soundCaosFreeze);
+}
+let raidActive=false, raidState=null;
+function triggerRaid(type){
+  const necro=(type==='necro'), name=necro?"NECROMANCERZY":"ROTWORMY", file=necro?"necromancer.gif":"rotworm%20(1).gif";
+  raidActive=true;
+  raidState={necro,file,winIndex:Math.random()<0.5?0:1,picked:false};
+  document.getElementById('raid-title').innerText=`NAJAZD: ${name}!`;
+  document.getElementById('raid-img').src=file;
+  document.getElementById('raid-desc').innerText=necro?"Atakują mroczni czarnoksiężnicy!":"Stada podziemnych gąsienic szturmują miasto!";
+  for(let i=0;i<2;i++){
+    const el=document.getElementById('raid-card-'+i);
+    el.className='raid-card'; el.innerHTML=`<span>❓</span><small>POLE ${i+1} [${i+1}]</small>`;
+  }
+  document.getElementById('raid-status').innerText="Wybierz jedno z dwóch pól – pod jednym kryje się zwycięstwo, pod drugim klęska!";
+  document.getElementById('raid-overlay').style.display='flex';
+  triggerNormaSpeech(`UWAGA! Najazd: ${name} zbliża się do miasta!`);
+  raidCooldown=25;
+  initAudio(); duck(true); playSound(soundRaid);
+}
+function pickRaidCard(i){
+  if(!raidActive||!raidState||raidState.picked) return;
+  raidState.picked=true;
+  let winIdx=raidState.winIndex, st=document.getElementById('raid-status');
+  let scarab=false;
+  if(scarabCharges>0){ scarabCharges--; winIdx=i; scarab=true; }
+  const isWin=(i===winIdx);
+  for(let j=0;j<2;j++){
+    const el=document.getElementById('raid-card-'+j), w=(j===winIdx);
+    el.className='raid-card revealed '+(w?'win':'lose')+(j===i?' chosen':'');
+    el.innerHTML=w?'<span>🏆</span><small>+300 CC</small>':'<span>💀</span><small>NAJAZD!</small>';
+  }
+  st.innerText=isWin?(scarab?"🛡️ SCARAB AMULET ODPARŁ NAJAZD!":"⚔️ ODPIERASZ NAJAZD! Zwycięstwo!"):"💥 PRZEGRANA! Potwory przebijają się do bębnów!";
+  const {necro,file}=raidState; updateUI();
+  setTimeout(()=>{
+    document.getElementById('raid-overlay').style.display='none';
+    raidActive=false; raidState=null;
+    if(soundRaid) soundRaid.pause();
+    duck(false);
+    if(isWin){ credits+=300; initAudio(); playSound(soundWin); triggerNpcSpeech("Zwycięstwo w walce z rajdowcami! Nagroda: +300 CC"); }
+    else{
+      invasionSpinsLeft=40; currentInvaderFile=file;
+      if(necro){ iceCollectedThisRun=0; scarabCharges=0; hasBlueGem=false; goldRingActive=false; essenceCount=0; triggerNpcSpeech("INWAZJA NECRO: Skradziono Błogosławieństwa i zablokowano bębny!"); }
+      else triggerNpcSpeech("Rotwormy zablokowały bębny maszyny na 40 spinów!");
+    }
+    updateUI();
+  },2600);
+}
+let mbActive=false, mbState=null;
+function openMusicBox(){
+  mbState={winIndex:Math.random()<0.5?0:1,prize:500+50*Math.floor(Math.random()*11),picked:false};
+  for(let i=0;i<2;i++){ const el=document.getElementById('mb-card-'+i); el.className='raid-card'; el.innerHTML=`<span>🎁</span><small>KARTA ${i+1} [${i+1}]</small>`; }
+  document.getElementById('mb-status').innerText='Wybierz kartę!';
+  document.getElementById('mb-overlay').style.display='flex';
+  initAudio(); duck(true); playSound(soundMusicBox);
+}
+function pickMbCard(i){
+  if(!mbActive||!mbState||mbState.picked) return;
+  mbState.picked=true;
+  const w=mbState.winIndex, isWin=(i===w), prize=mbState.prize;
+  for(let j=0;j<2;j++){
+    const el=document.getElementById('mb-card-'+j), win=(j===w);
+    el.className='raid-card revealed '+(win?'win':'lose')+(j===i?' chosen':'');
+    el.innerHTML=win?`<span>💰</span><small>+${prize} CC</small>`:'<span>💀</span><small>NECROMANCERZY!</small>';
+  }
+  document.getElementById('mb-status').innerText=isWin?`🎉 Music Box ukrywał ${prize} CAOSCOIN!`:'☠️ Z pudełka wyłaniają się Necromancerzy!';
+  setTimeout(()=>{
+    document.getElementById('mb-overlay').style.display='none';
+    mbActive=false; mbState=null;
+    if(soundMusicBox) soundMusicBox.pause();
+    duck(false);
+    if(isWin){ credits+=prize; initAudio(); playSound(soundNpcReward); updateHistoryUI(prize,'Music Box'); triggerNpcSpeech(`Music Box: +${prize} CC!`); }
+    else triggerRaid('necro');
+    updateUI();
+  },2600);
+}
+function toggleInfoModal(){
+  const m=document.getElementById('info-modal');
+  if(m.style.display==='flex') m.style.display='none';
+  else{ m.style.display='flex'; initAudio(); playSound(soundClick); }
+}
+function triggerWinEffect(it){
+  const o=document.getElementById('win-overlay'); document.getElementById('win-gif').src=it.winGif||it.file;
+  o.style.display='flex'; setTimeout(()=>o.style.display='none',2500);
+}
+
+/* ---------- STEROWANIE ---------- */
+function toggleHold(i){ if(isSpinning) return; playAlternatingHoldSound(); holds[i]=!holds[i]; updateUI(); }
+function setBet(i){ if(isSpinning) return; initAudio(); playSound(soundClick); currentBetIndex=i; updateUI(); }
+function setLines(i){ if(isSpinning) return; initAudio(); playSound(soundClick); lineIndex=i; selectedLines=lineOptions[i]; updateUI(); }
+function changeBet(){ if(isSpinning) return; initAudio(); playSound(soundClick); currentBetIndex=(currentBetIndex+1)%bets.length; updateUI(); }
+function changeLines(){ if(isSpinning) return; initAudio(); playSound(soundClick); lineIndex=(lineIndex+1)%lineOptions.length; selectedLines=lineOptions[lineIndex]; updateUI(); }
+function resetCredits(){ if(isSpinning) return; initAudio(); playSound(soundClick); giveRashidSupport(); }
+
+function spin(){
+  if(isSpinning||raidActive||mbActive||!loggedIn) return;
+  initAudio();
+  const cost=bets[currentBetIndex]*selectedLines;
+  if(credits<cost && caosFreezeSpinsLeft<=0){ giveRashidSupport(); return; }
+  if(caosFreezeSpinsLeft>0){ caosFreezeSpinsLeft--; if(caosFreezeSpinsLeft===0&&soundCaosFreeze) soundCaosFreeze.pause(); }
+  else credits-=cost;
+  if(boostSpinsLeft>0) boostSpinsLeft--;
+  if(invasionSpinsLeft>0) invasionSpinsLeft--;
+  if(raidCooldown>0) raidCooldown--;
+  clearWinHighlights();
+  document.getElementById('win-overlay').style.display='none';
+  playSound(soundSpin); isSpinning=true; updateUI();
+  let counter=0;
+  const iv=setInterval(()=>{
+    for(let i=0;i<NREELS;i++) if(!holds[i]) currentReelsData[i]=genReel();
+    renderReels(); counter++;
+    if(counter>20){ clearInterval(iv); finalizeSpin(); }
+  },65);
+}
+
+function finalizeSpin(){
+  for(let i=0;i<NREELS;i++) if(!holds[i]) currentReelsData[i]=genReel();
+  renderReels();
+  holds=Array(NREELS).fill(false);
+  isSpinning=false;
+
+  if(invasionSpinsLeft>0){ updateUI(); return; }
+
+  /* przedmioty specjalne: maks. 1 błogosławieństwo na spin */
+  let iceCubeCount=0, blessing=null, musicBoxFound=false, mbCell=null;
+  for(let r=0;r<NREELS;r++) for(let c=0;c<NROWS;c++){
+    const it=currentReelsData[r][c];
+    if(!blessing && (it.isScarab||it.isBlueGem||it.isGoldRing||it.isEssence)) blessing=it;
+    if(it.isMusicBox && !musicBoxFound){ musicBoxFound=true; mbCell=[r,c]; }
+    if(it.isIce){ iceCubeCount++; iceCollectedThisRun++; }
+    if(it.isCrystal){
+      crystalCollected++;
+      if(crystalCollected>=10 && boostSpinsLeft===0){
+        crystalCollected=0; boostSpinsLeft=30; initAudio(); playSound(soundNpcReward); triggerNpcSpeech(translations.crystalBoostMsg);
+      }
+    }
+  }
+  if(musicBoxFound) document.getElementById(`c_${mbCell[0]}_${mbCell[1]}`).classList.add('win-cell');
+  if(blessing){
+    if(blessing.isScarab){ scarabCharges=Math.min(scarabCharges+2,4); triggerFerumbrasBlessing("Scarab Amulet: +2 Ochrony Najazdu"); }
+    else if(blessing.isBlueGem){ hasBlueGem=true; triggerFerumbrasBlessing("Blue Gem: -20% Szansy na Rajd"); }
+    else if(blessing.isGoldRing){ goldRingActive=true; triggerFerumbrasBlessing("Gold Ring: 90% Szansy na Caosa!"); }
+    else if(blessing.isEssence){ if(essenceCount<3) essenceCount++; triggerFerumbrasBlessing(`Demonic Essence: +${essenceCount*10}% do Wygranych!`); }
+  }
+  if(iceCubeCount>=4 || iceCollectedThisRun>=6){
+    credits+=500; consecutiveLosses=0; iceCollectedThisRun=0; updateFireSpread();
+    initAudio(); playSound(soundNpcReward); triggerNpcSpeech(translations.iceCubeBonusMsg);
+  }
+
+  /* liczenie WSZYSTKICH aktywnych linii: serie od lewej, min. 2 z rzędu */
+  const active=allPaylines.slice(0,selectedLines);
+  const bet=bets[currentBetIndex];
+  let totalWin=0, bestItem=null, bestLine=0, bestCount=0, winningLines=0;
+  let mult=1+(boostSpinsLeft>0?0.5:0)+essenceCount*0.10;
+
+  active.forEach(line=>{
+    const first=currentReelsData[0][line.rows[0]];
+    if(!(first.multiplier>0)) return;
+    let k=1;
+    while(k<NREELS && currentReelsData[k][line.rows[k]].name===first.name) k++;
+    if(k>=2){
+      const win=Math.floor(bet*first.multiplier*lenPay[k]*mult);
+      totalWin+=win; winningLines++;
+      if(win>bestLine){ bestLine=win; bestItem=first; bestCount=k; }
+      for(let r=0;r<k;r++) document.getElementById(`c_${r}_${line.rows[r]}`).classList.add('win-cell');
+    }
+  });
+
+  if(totalWin>0){
+    playSound(consecutiveLosses>=5?soundResetFire:soundWin);
+    consecutiveLosses=0; updateFireSpread();
+    credits+=totalWin; updateHistoryUI(totalWin,`${bestCount}x ${bestItem.name}`);
+    triggerNpcSpeech(`Wygrana! ${bestCount}x ${bestItem.name}${winningLines>1?` (+${winningLines} linii)`:''} (+${totalWin} CC)!`);
+    triggerWinEffect(bestItem);
+  } else {
+    const oldF=Math.floor(consecutiveLosses/5); consecutiveLosses++;
+    if(Math.floor(consecutiveLosses/5)>oldF) playSound(soundNewFire);
+    updateFireSpread();
+    if(--spinsToNextNpc<=0){ triggerNpcSpeech(); spinsToNextNpc=Math.floor(Math.random()*8)+5; }
+    if(--spinsToNextNorma<=0){ triggerNormaSpeech(); spinsToNextNorma=Math.floor(Math.random()*31)+25; }
+    if(!musicBoxFound && Math.random()<raidChance()) triggerRaid(Math.random()<0.35?'necro':'rotworm');
+    const cc=caosChance(); if(goldRingActive) goldRingActive=false;
+    if(!musicBoxFound && Math.random()<cc) triggerCaosAppearance();
+  }
+  if(musicBoxFound){ mbActive=true; setTimeout(openMusicBox,1200); }
+  updateUI();
+}
+
+renderReels(); updateUI();
+window.addEventListener('keydown',e=>{
+  if(!loggedIn) return;
+  if(mbActive){ if(e.code==='Space') e.preventDefault(); if(e.key==='1') pickMbCard(0); if(e.key==='2') pickMbCard(1); return; }
+  if(raidActive){ if(e.code==='Space') e.preventDefault(); if(e.key==='1') pickRaidCard(0); if(e.key==='2') pickRaidCard(1); return; }
+  if(e.code==='Space'){ e.preventDefault(); spin(); }
+  if(e.key>='1'&&e.key<='6') toggleHold(parseInt(e.key)-1);
+  const k=e.key.toLowerCase();
+  if(k==='c') changeBet(); if(k==='l') changeLines(); if(k==='r') resetCredits(); if(k==='i') toggleInfoModal(); if(k==='m') toggleMusic();
+});
+</script>
+</body>
+</html>
