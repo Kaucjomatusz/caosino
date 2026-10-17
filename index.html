@@ -19,14 +19,14 @@ body{background:#0b0d0f url('tlo.jpg') no-repeat center center fixed;background-
 .defender-img{width:90px;height:90px;image-rendering:pixelated;filter:drop-shadow(0 0 15px #ffffff)}
 @keyframes defenderAppear{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
 
-/* WARLOCKI I EFEKTY ENERGII (EF.gif) PODCZAS NAJAZDU */
+/* WARLOCKI I EFEKTY ENERGII PODCZAS NAJAZDU */
 #monster-attack-overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:75;pointer-events:none;display:none;width:100%;height:100%;justify-content:center;align-items:center}
 #monster-attack-overlay.visible{display:flex}
 .warlock-monster{position:absolute;width:90px;height:90px;image-rendering:pixelated;filter:drop-shadow(0 0 15px #3498db)}
 .energy-effect{position:absolute;width:70px;height:70px;background:url('EF.gif') no-repeat center center;background-size:contain;image-rendering:pixelated;filter:drop-shadow(0 0 15px #0ff);animation:energyPulse 0.4s infinite alternate ease-in-out}
 @keyframes energyPulse{from{transform:scale(0.9);opacity:0.8}to{transform:scale(1.15);opacity:1}}
 
-/* MNISI MODLĄCY SIĘ DO MASZYNY (PŁYNNE POJAWIANIE I ZNIKANIE) */
+/* MNISI MODLĄCY SIĘ DO MASZYNY */
 #monk-ritual-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:80;pointer-events:none;opacity:0;transition:opacity 1s ease;display:none}
 #monk-ritual-overlay.visible{display:block;opacity:1}
 .monk-npc{position:absolute;width:80px;height:80px;image-rendering:pixelated;filter:drop-shadow(0 0 16px #f39c12)}
@@ -64,7 +64,7 @@ body{background:#0b0d0f url('tlo.jpg') no-repeat center center fixed;background-
 
 .reel-container{display:flex;flex-direction:column;align-items:center}
 .reel-strip{width:100px;height:380px;background:#0f1012;border:2px solid #5a5e63;border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:space-around;overflow:hidden;box-shadow:inset 0 0 15px #000}
-.slot-item{width:72px;height:72px;display:flex;align-items:center;justify-content:center;transition:all .2s ease}
+.slot-item{width:72px;height:72px;display:flex;align-items:center;justify-content:center;transition:all .15s ease}
 .slot-item.top-item,.slot-item.bottom-item{transform:scale(.85);filter:brightness(.6)}
 .slot-item.center-item{transform:scale(1.05);filter:brightness(1.1);z-index:2}
 .slot-item.win-cell img{filter:drop-shadow(0 0 10px #0f0) brightness(1.4)!important;transform:scale(1.25)}
@@ -114,7 +114,7 @@ body{background:#0b0d0f url('tlo.jpg') no-repeat center center fixed;background-
 .btn-toggle{background:#2b2e32;color:#f39c12;border:1px solid #4a4e53;border-radius:3px;padding:6px;font-weight:bold;font-size:11px;cursor:pointer;width:100%;margin-top:4px}
 .btn-toggle.active{background:#27ae60;color:#fff;border-color:#2ecc71}
 
-#login-screen{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1000;background:url('ekran_logowania.png') no-repeat center/contain,url('ekran%20logowania.png') no-repeat center/contain #fff;transition:opacity .5s}
+#login-screen{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1000;background:url('ekran_logowania.png') no-repeat center/contain #fff;transition:opacity .5s}
 .pin-box{position:absolute;top:66%;left:50%;transform:translateX(-50%);text-align:center}
 #pin-input{width:200px;font-size:30px;letter-spacing:14px;text-align:center;border:3px solid #000;border-radius:8px;background:#fff;color:#000;padding:8px 0 8px 14px;outline:none}
 </style>
@@ -131,7 +131,6 @@ body{background:#0b0d0f url('tlo.jpg') no-repeat center center fixed;background-
 <div id="fire-container"></div>
 <div id="dragon-fire-container"></div>
 
-<!-- WARSTWA RYTUAŁU MNICHÓW -->
 <div id="monk-ritual-overlay">
   <img class="monk-npc monk-left" src="monk.gif" style="top:25%" alt="Monk">
   <img class="monk-npc monk-left" src="monk.gif" style="bottom:25%" alt="Monk">
@@ -139,13 +138,11 @@ body{background:#0b0d0f url('tlo.jpg') no-repeat center center fixed;background-
   <img class="monk-npc monk-right" src="monk.gif" style="bottom:25%" alt="Monk">
 </div>
 
-<!-- GOD CAOS NA GÓRZE EKRANU -->
 <div id="god-caos-container">
   <div class="god-caos-speech">Czym byłby świat bez hazardu moje dzieci</div>
   <img class="god-caos-img" src="god_caos.gif" alt="God Caos">
 </div>
 
-<!-- NAPIS BOSKIE OCZYSZCZENIE -->
 <div id="boskie-oczyszczenie-overlay">
   <div class="boskie-box">
     <div class="boskie-title">⚡ BOSKIE OCZYSZCZENIE ⚡</div>
@@ -153,12 +150,10 @@ body{background:#0b0d0f url('tlo.jpg') no-repeat center center fixed;background-
   </div>
 </div>
 
-<!-- FERUMBRAS BRONIĄCY MASZYNY -->
 <div id="ferumbras-defender">
   <img class="defender-img" src="ferumbras.gif" alt="Ferumbras Defender">
 </div>
 
-<!-- WARLOCKI I EFEKTY ENERGII -->
 <div id="monster-attack-overlay"></div>
 
 <div id="holly-caos-overlay">
@@ -299,13 +294,14 @@ const items=[
   {name:"SD Rune",file:"sudden_death_rune.gif",weight:17,multiplier:3},
   {name:"Boots of Haste",file:"boots_of_haste.gif",weight:13,multiplier:5},
   {name:"Crown Helmet",file:"crown_helmet.gif",weight:10,multiplier:7},
-  {name:"Golden Armor",file:"golden_armor.gif",weight:7,multiplier:12},
+  {name:"Golden Armor",file:"golden_helmet.gif",weight:7,multiplier:12},
   {name:"Demon Shield",file:"demon_shield.gif",weight:5,multiplier:18},
   {name:"Royal Helmet",file:"royal_helmet.gif",weight:3.5,multiplier:30},
   {name:"Soft Boots",file:"soft_boots.gif",weight:2.5,multiplier:50},
   {name:"MPA",file:"magic_plate_armor.gif",weight:1.5,multiplier:90},
   {name:"Golden Helmet",file:"golden_helmet.gif",weight:0.8,multiplier:250},
   {name:"Magic Longsword",file:"magic_longsword.gif",weight:0.4,multiplier:600},
+  {name:"God Caos",file:"god_caos.gif",weight:0.2,multiplier:1000},
   {name:"Ice Cube",file:"ice_cube.gif",weight:1.0,multiplier:0,isIce:true},
   {name:"Life Crystal",file:"life_crystal.gif",weight:1.2,multiplier:0,isCrystal:true},
   {name:"Scarab Amulet",file:"scarab_amulet.gif",weight:0.03,multiplier:0,isScarab:true},
@@ -315,29 +311,22 @@ const items=[
   {name:"Music Box",file:"music_box_chayenne.gif",weight:0.01,multiplier:0,isMusicBox:true}
 ];
 const TOTAL_WEIGHT=items.reduce((a,b)=>a+b.weight,0);
-const lenPay={2:1.5, 3:3, 4:9, 5:30, 6:120};
 
 const lineRows=[[2,2,2,2,2,2],[1,1,1,1,1,1],[3,3,3,3,3,3],[0,0,0,0,0,0],[4,4,4,4,4,4],
   [0,1,2,2,1,0],[4,3,2,2,3,4],[2,1,0,0,1,2],[2,3,4,4,3,2],[0,1,2,3,4,4],
   [4,3,2,1,0,0],[1,0,0,0,0,1],[3,4,4,4,4,3],[1,2,3,3,2,1],[3,2,1,1,2,3],
   [0,1,0,1,0,1],[4,3,4,3,4,3],[2,1,2,3,2,1],[1,2,1,2,1,2],[3,2,3,2,3,2]];
-const allPaylines=lineRows.map((rows,i)=>({name:'LINIA '+(i+1),rows}));
 const lineOptions=[1,5,10,15,20];
 const bets=[5,10,20,50,80,100];
 
 let currentBetIndex=1, lineIndex=0, selectedLines=1;
 let credits=1000, isSpinning=false, holds=Array(NREELS).fill(false);
-let consecutiveLosses=0, crystalCollected=0, iceCollectedThisRun=0;
+let crystalCollected=0, iceCollectedThisRun=0;
 let boostSpinsLeft=0, caosFreezeSpinsLeft=0, scarabCharges=0, hasBlueGem=false, goldRingActive=false, essenceCount=0;
-let raidCooldown=0, lastWinsHistory=[];
-
-let dragonCountdown = Math.floor(Math.random()*40) + 110;
-let dragonActiveSpins = 0;
-let dragonWarned = false;
+let raidCooldown=0;
 
 let godCaosCountdown = Math.floor(Math.random()*16) + 35;
 let boskieOczyszczenieSpinsLeft = 0;
-
 let silentNpcCountdown = Math.floor(Math.random()*7) + 8;
 let monkRitualActive = false;
 let lowBalanceMonkTriggered = false;
@@ -350,37 +339,23 @@ function tryLogin(){
   if(i.value==='1960'){
     loggedIn=true; ls.style.opacity=0; setTimeout(()=>ls.style.display='none',500);
     initAudio(); if(bgMusic&&musicOn) bgMusic.play().catch(()=>{}); updateUI();
-    
-    setTimeout(() => {
-      triggerMonkRitual();
-    }, 12000);
-
+    setTimeout(() => { triggerMonkRitual(); }, 12000);
   } else { i.value=''; }
 }
 
 function triggerMonkRitual(){
   if(monkRitualActive) return;
   monkRitualActive = true;
-
   const monkOverlay = document.getElementById('monk-ritual-overlay');
   const slotMachine = document.getElementById('slot-machine');
-  
   monkOverlay.classList.add('visible');
   slotMachine.classList.add('monk-dark-buff');
   playSound(soundMonki);
-
   setTimeout(() => {
     monkOverlay.classList.remove('visible');
     slotMachine.classList.remove('monk-dark-buff');
-    
-    if(soundMonki){
-      soundMonki.pause();
-      soundMonki.currentTime = 0;
-    }
-
-    setTimeout(() => {
-      monkRitualActive = false;
-    }, 1000);
+    if(soundMonki){ soundMonki.pause(); soundMonki.currentTime = 0; }
+    setTimeout(() => { monkRitualActive = false; }, 1000);
   }, 10000); 
 }
 
@@ -423,9 +398,6 @@ function updateUI(){
   document.getElementById('hud-ice').innerText=`${iceCollectedThisRun}/6`;
 
   const show=(id,on)=>document.getElementById(id).style.display=on?'flex':'none';
-  show('hud-dragon-row', dragonActiveSpins>0);
-  if(dragonActiveSpins>0) document.getElementById('hud-dragon-spins').innerText=`${dragonActiveSpins} sp.`;
-
   show('hud-boskie-row', boskieOczyszczenieSpinsLeft>0);
   if(boskieOczyszczenieSpinsLeft>0) document.getElementById('hud-boskie-spins').innerText=`${boskieOczyszczenieSpinsLeft} sp.`;
 
@@ -443,26 +415,6 @@ function updateUI(){
   for(let i=0;i<NREELS;i++) document.getElementById(`hold${i+1}`).classList.toggle('active',holds[i]);
 }
 
-function updateDragonFireEffects(){
-  const fc=document.getElementById('dragon-fire-container');
-  fc.innerHTML='';
-  if(dragonActiveSpins<=0) return;
-  const pos=[
-    {top:'2%',left:'1%'},{top:'2%',right:'1%'},{top:'12%',left:'0%'},{top:'12%',right:'0%'},
-    {bottom:'2%',left:'2%'},{bottom:'2%',right:'2%'},{top:'65%',left:'12%'},{top:'65%',right:'12%'},
-    {top:'35%',left:'0%'},{top:'35%',right:'0%'},{top:'22%',left:'6%'},{top:'22%',right:'6%'},
-    {bottom:'20%',left:'8%'},{bottom:'20%',right:'8%'},{top:'50%',left:'2%'},{top:'50%',right:'2%'},
-    {top:'85%',left:'25%'},{top:'85%',right:'25%'}
-  ];
-  pos.forEach((p,i)=>{
-    const d=document.createElement('div'); d.className='dragon-fire';
-    if(p.top) d.style.top=p.top; if(p.bottom) d.style.bottom=p.bottom;
-    if(p.left) d.style.left=p.left; if(p.right) d.style.right=p.right;
-    d.style.animationDelay=(i*0.08)+'s';
-    fc.appendChild(d);
-  });
-}
-
 function toggleHold(i){ if(isSpinning) return; playSound(soundClick); holds[i]=!holds[i]; updateUI(); }
 function setBet(i){ if(isSpinning) return; playSound(soundClick); currentBetIndex=i; updateUI(); }
 function setLines(i){ if(isSpinning) return; playSound(soundClick); lineIndex=i; selectedLines=lineOptions[i]; updateUI(); }
@@ -472,15 +424,8 @@ function toggleMusic(){ musicOn=!musicOn; if(bgMusic){ if(musicOn) bgMusic.play(
 function showNpcMessage(npcType, text, displayTime=12000){
   const slotId = npcType==='rashid'?'npc-container':(npcType==='norma'?'norma-container':'ferumbras-container');
   const textId = npcType==='rashid'?'npc-text':(npcType==='norma'?'norma-text':'ferumbras-text');
-  
   const textEl = document.getElementById(textId);
-  if(text && text.trim() !== ""){
-    textEl.innerText = text;
-    textEl.style.display = 'block';
-  } else {
-    textEl.style.display = 'none';
-  }
-
+  if(text && text.trim() !== ""){ textEl.innerText = text; textEl.style.display = 'block'; } else { textEl.style.display = 'none'; }
   const slot = document.getElementById(slotId);
   slot.classList.add('visible');
   setTimeout(()=>{
@@ -512,16 +457,6 @@ function spin(){
       document.getElementById('god-caos-container').classList.remove('visible');
     }
   }
-  
-  if(dragonActiveSpins>0){ 
-    dragonActiveSpins--; 
-    updateDragonFireEffects(); 
-    if(dragonActiveSpins===0){
-      document.getElementById('monster-attack-overlay').classList.remove('visible');
-      document.getElementById('ferumbras-defender').classList.remove('visible');
-      document.getElementById('slot-machine').classList.remove('white-buff');
-    }
-  }
 
   if(raidCooldown>0) raidCooldown--;
 
@@ -531,8 +466,7 @@ function spin(){
       silentNpcCountdown = Math.floor(Math.random()*7) + 8;
       const npcs = ['rashid', 'norma', 'ferumbras'];
       const chosen = npcs[Math.floor(Math.random()*npcs.length)];
-      const displayTime = (Math.floor(Math.random()*4) + 7) * 1000;
-      showNpcMessage(chosen, "", displayTime);
+      showNpcMessage(chosen, "", 8000);
     }
   }
 
@@ -547,17 +481,27 @@ function spin(){
   }
 
   isSpinning = true;
+  
+  // ANIMACJA KRĘCENIA BĘBNÓW
+  let spinIntervals = [];
   for(let i=0; i<NREELS; i++){
     if(!holds[i]){
-      currentReelsData[i] = genReel();
+      spinIntervals[i] = setInterval(() => {
+        currentReelsData[i] = genReel();
+        renderReels();
+      }, 70);
     }
   }
 
-  let stopDelay = turboMode ? 100 : 300;
+  let stopDelay = turboMode ? 200 : 500;
   for(let i=0; i<NREELS; i++){
     setTimeout(() => {
-      playReelStopSound();
-      renderReels();
+      if(!holds[i] && spinIntervals[i]){
+        clearInterval(spinIntervals[i]);
+        currentReelsData[i] = genReel();
+        renderReels();
+        playReelStopSound();
+      }
       if(i === NREELS - 1){
         isSpinning = false;
         holds.fill(false);
