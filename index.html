@@ -57,7 +57,7 @@ body{background:#0b0d0f url('tlo.jpg') no-repeat center center fixed;background-
 .hud-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:bold;gap:10px}
 .hud-badge{background:#111214;padding:2px 6px;border-radius:3px;border:1px solid #333;color:#0f0;font-size:11px}
 
-/* MASZYNA HAZARDOWA (Z WZMOCNIONĄ MROCZNĄ POŚWIATĄ NAPRAWIANego MURU) */
+/* MASZYNA HAZARDOWA */
 .slot-machine{display:flex;gap:12px;background:#181a1c;padding:15px;border-radius:6px;border:3px solid #3e4247;box-shadow:inset 0 0 15px #000;position:relative;z-index:10;transition:all 0.6s ease}
 .slot-machine.white-buff{border-color:#ffffff;background:#2a2f35;box-shadow:0 0 40px #ffffff, inset 0 0 30px #ffffff}
 .slot-machine.monk-dark-buff{border-color:#2c3e50;background:#050608;box-shadow:0 0 60px rgba(52, 152, 219, 0.6), inset 0 0 40px #000000, 0 0 30px #f39c12}
@@ -142,7 +142,7 @@ body{background:#0b0d0f url('tlo.jpg') no-repeat center center fixed;background-
 <!-- GOD CAOS NA GÓRZE EKRANU -->
 <div id="god-caos-container">
   <div class="god-caos-speech">Czym byłby świat bez hazardu moje dzieci</div>
-  <img class="god-caos-img" src="god_caos.gif" alt="God Caos" onerror="this.src='rashid-tibia.gif'">
+  <img class="god-caos-img" src="god_caos.gif" alt="God Caos">
 </div>
 
 <!-- NAPIS BOSKIE OCZYSZCZENIE -->
@@ -155,7 +155,7 @@ body{background:#0b0d0f url('tlo.jpg') no-repeat center center fixed;background-
 
 <!-- FERUMBRAS BRONIĄCY MASZYNY -->
 <div id="ferumbras-defender">
-  <img class="defender-img" src="ferumbras.gif" alt="Ferumbras Defender" onerror="this.src='rashid-tibia.gif'">
+  <img class="defender-img" src="ferumbras.gif" alt="Ferumbras Defender">
 </div>
 
 <!-- WARLOCKI I EFEKTY ENERGII -->
@@ -211,14 +211,14 @@ body{background:#0b0d0f url('tlo.jpg') no-repeat center center fixed;background-
 </div>
 
 <div id="npc-column">
-  <div class="npc-slot" id="ferumbras-container"><div class="speech-bubble" id="ferumbras-text"></div><img class="npc-img-style" src="ferumbras.gif" alt="Ferumbras" onerror="this.src='rashid-tibia.gif'"></div>
+  <div class="npc-slot" id="ferumbras-container"><div class="speech-bubble" id="ferumbras-text"></div><img class="npc-img-style" src="ferumbras.gif" alt="Ferumbras"></div>
   <div class="npc-slot" id="npc-container"><img class="npc-img-style" src="rashid-tibia.gif" alt="Rashid"><div class="speech-bubble" id="npc-text">Witaj travelerze!</div></div>
   <div class="npc-slot" id="norma-container"><img class="npc-img-style" src="Norma.gif" alt="Norma"><div class="speech-bubble" id="norma-text"></div></div>
 </div>
 
 <div id="caos-container">
   <div class="caos-speech" id="caos-speech-text">Łaska Pana Caosa spływa na ciebie!</div>
-  <img class="npc-img-style" src="CAOS.gif" alt="Caos" onerror="this.src='rashid-tibia.gif'">
+  <img class="npc-img-style" src="CAOS.gif" alt="Caos">
 </div>
 
 <div class="slot-machine" id="slot-machine"></div>
@@ -299,7 +299,7 @@ const items=[
   {name:"SD Rune",file:"sudden_death_rune.gif",weight:17,multiplier:3},
   {name:"Boots of Haste",file:"boots_of_haste.gif",weight:13,multiplier:5},
   {name:"Crown Helmet",file:"crown_helmet.gif",weight:10,multiplier:7},
-  {name:"Golden Armor",file:"golden_helmet.gif",weight:7,multiplier:12},
+  {name:"Golden Armor",file:"golden_armor.gif",weight:7,multiplier:12},
   {name:"Demon Shield",file:"demon_shield.gif",weight:5,multiplier:18},
   {name:"Royal Helmet",file:"royal_helmet.gif",weight:3.5,multiplier:30},
   {name:"Soft Boots",file:"soft_boots.gif",weight:2.5,multiplier:50},
@@ -351,7 +351,6 @@ function tryLogin(){
     loggedIn=true; ls.style.opacity=0; setTimeout(()=>ls.style.display='none',500);
     initAudio(); if(bgMusic&&musicOn) bgMusic.play().catch(()=>{}); updateUI();
     
-    // MNISI POJAWIAJĄ SIĘ PO 12 SEKUNDACH OD STARTU GRY
     setTimeout(() => {
       triggerMonkRitual();
     }, 12000);
@@ -370,12 +369,10 @@ function triggerMonkRitual(){
   slotMachine.classList.add('monk-dark-buff');
   playSound(soundMonki);
 
-  // Rytułał trwa równe 10 sekund (znikają razem z dźwiękiem/efektem)
   setTimeout(() => {
     monkOverlay.classList.remove('visible');
     slotMachine.classList.remove('monk-dark-buff');
     
-    // Zatrzymanie dźwięku monków jeśli jeszcze grał
     if(soundMonki){
       soundMonki.pause();
       soundMonki.currentTime = 0;
@@ -501,7 +498,6 @@ function spin(){
   if(caosFreezeSpinsLeft>0) caosFreezeSpinsLeft--;
   else credits-=cost;
 
-  // SPRAWDZENIE SALDA: Jeśli saldo spadnie poniżej 200 CC, mnisi przychodzą na ratunek!
   if(credits < 200 && !lowBalanceMonkTriggered){
     lowBalanceMonkTriggered = true;
     triggerMonkRitual();
@@ -544,232 +540,45 @@ function spin(){
     godCaosCountdown--;
     if(godCaosCountdown === 0){
       godCaosCountdown = Math.floor(Math.random()*16) + 35;
-      
-      const caosBox = document.getElementById('god-caos-container');
-      caosBox.classList.add('visible');
+      boskieOczyszczenieSpinsLeft = 20;
+      document.getElementById('god-caos-container').classList.add('visible');
       playSound(soundGodBless);
-
-      const options = [false, false, false, false, false, false, false, true];
-      const getBlessing = options[Math.floor(Math.random() * options.length)];
-
-      if(getBlessing){
-        boskieOczyszczenieSpinsLeft = 20;
-        const boskieOverlay = document.getElementById('boskie-oczyszczenie-overlay');
-        boskieOverlay.style.display = 'flex';
-        setTimeout(() => {
-          boskieOverlay.style.display = 'none';
-        }, 6000);
-      } else {
-        setTimeout(() => {
-          caosBox.classList.remove('visible');
-        }, 8000);
-      }
     }
   }
 
-  if(dragonCountdown>0 && dragonActiveSpins===0){
-    dragonCountdown--;
-    if(dragonCountdown<=10 && !dragonWarned){
-      dragonWarned=true;
-      showNpcMessage('norma', 'Czuję żar... Warlocki zbliżają się by zaatakować maszynę!');
-    }
-    if(dragonCountdown===0){
-      dragonActiveSpins=10; 
-      dragonCountdown=Math.floor(Math.random()*40) + 110;
-      dragonWarned=false;
-      
-      document.getElementById('slot-machine').classList.add('white-buff');
-      document.getElementById('ferumbras-defender').classList.add('visible');
-      playSound(soundNpcReward); 
-      showNpcMessage('ferumbras', 'Rzucam zaklęcie tarczy na maszynę!');
-
-      setTimeout(() => {
-        const attackOverlay = document.getElementById('monster-attack-overlay');
-        attackOverlay.innerHTML = '';
-        attackOverlay.classList.add('visible');
-        playSound(soundEnergyField);
-        updateDragonFireEffects();
-
-        const positions = [
-          {top:'20%', left:'15%'}, {top:'25%', right:'18%'},
-          {bottom:'20%', left:'20%'}, {bottom:'25%', right:'15%'},
-          {top:'45%', left:'5%'}, {top:'40%', right:'5%'}
-        ];
-        
-        positions.forEach((pos) => {
-          const warlock = document.createElement('img');
-          warlock.src = 'warlock.gif';
-          warlock.className = 'warlock-monster';
-          if(pos.top) warlock.style.top = pos.top;
-          if(pos.bottom) warlock.style.bottom = pos.bottom;
-          if(pos.left) warlock.style.left = pos.left;
-          if(pos.right) warlock.style.right = pos.right;
-          attackOverlay.appendChild(warlock);
-
-          const ef = document.createElement('div');
-          ef.className = 'energy-effect';
-          if(pos.top) ef.style.top = `calc(${pos.top} + 20px)`;
-          if(pos.bottom) ef.style.bottom = `calc(${pos.bottom} + 20px)`;
-          if(pos.left) ef.style.left = `calc(${pos.left} + 40px)`;
-          if(pos.right) ef.style.right = `calc(${pos.right} + 40px)`;
-          attackOverlay.appendChild(ef);
-        });
-        
-        setTimeout(() => {
-          attackOverlay.classList.remove('visible');
-          attackOverlay.innerHTML = '';
-          
-          showNpcMessage('ferumbras', '*Mwahaha! Nie dacie rady!*');
-          setTimeout(() => {
-            document.getElementById('ferumbras-defender').classList.remove('visible');
-            document.getElementById('slot-machine').classList.remove('white-buff');
-            
-            setTimeout(() => {
-              showNpcMessage('rashid', 'Uff... Znowu daliśmy radę!');
-            }, 8000);
-            
-          }, 2000);
-          
-        }, 7000);
-        
-      }, 5000);
+  isSpinning = true;
+  for(let i=0; i<NREELS; i++){
+    if(!holds[i]){
+      currentReelsData[i] = genReel();
     }
   }
 
-  clearWinHighlights();
-  isSpinning=true; updateUI();
-
-  let counter=0;
-  let iv=setInterval(()=>{
-    for(let i=0;i<NREELS;i++) if(!holds[i]) currentReelsData[i]=genReel();
-    renderReels();
-    counter++;
-    if(counter>(turboMode?10:22)){
-      clearInterval(iv);
-      for(let i=0;i<NREELS;i++) if(!holds[i]) playReelStopSound();
-      finalizeSpin();
-    }
-  }, turboMode?40:65);
-}
-
-function clearWinHighlights(){
-  for(let r=0;r<NREELS;r++) for(let c=0;c<NROWS;c++){ const el=document.getElementById(`c_${r}_${c}`); if(el) el.classList.remove('win-cell'); }
-}
-
-function finalizeSpin(){
-  for(let i=0;i<NREELS;i++) if(!holds[i]) currentReelsData[i]=genReel();
-  renderReels();
-  holds=Array(NREELS).fill(false);
-  isSpinning=false;
-
-  let blessingName = null;
-  for(let r=0;r<NREELS;r++) for(let c=0;c<NROWS;c++){
-    const it=currentReelsData[r][c];
-    if(it.isScarab) blessingName = "Scarab Amulet dodaje ochronę przed najazdem!";
-    if(it.isBlueGem) blessingName = "Niebieski Klejnot osłabia szanse na najazd!";
-    if(it.isGoldRing) blessingName = "Złoty Pierścień potęguje łaskę Caosa!";
-    if(it.isEssence) blessingName = "Demoniczna Esencja wzmacnia Twoje wygrane!";
-  }
-  if(blessingName){
-    showNpcMessage('rashid', blessingName);
-  }
-
-  const active=allPaylines.slice(0,selectedLines);
-  const bet=bets[currentBetIndex];
-  let totalWin=0, bestItem=null, bestCount=0;
-  let mult=1 + (boostSpinsLeft>0?0.5:0) + essenceCount*0.10 + (dragonActiveSpins>0?0.20:0);
-
-  active.forEach(line=>{
-    const first=currentReelsData[0][line.rows[0]];
-    if(!(first.multiplier>0)) return;
-    let k=1;
-    while(k<NREELS && currentReelsData[k][line.rows[k]].name===first.name) k++;
-    if(k>=2){
-      const win=Math.floor(bet*first.multiplier*lenPay[k]*mult);
-      totalWin+=win;
-      if(win>totalWin||!bestItem){ bestItem=first; bestCount=k; }
-      for(let r=0;r<k;r++) document.getElementById(`c_${r}_${line.rows[r]}`).classList.add('win-cell');
-    }
-  });
-
-  const totalBet=bet*selectedLines;
-
-  if(totalWin>=totalBet*25){
-    triggerHollyCaos(totalWin);
-  } else if(totalWin>0){
-    playSound(soundWin);
-    credits+=totalWin;
-    updateHistoryUI(totalWin,`${bestCount}x ${bestItem.name}`);
-    
-    const winQuotes = [
-      `Świetny traf! +${totalWin} CC wpada do kieszeni!`,
-      `Złoto płynie szerokim strumieniem! Wygrana: ${totalWin} CC!`,
-      `Piękny rzut, travelerze! Zarabiasz ${totalWin} CC!`
-    ];
-    showNpcMessage('rashid', winQuotes[Math.floor(Math.random()*winQuotes.length)]);
-
-  } else {
-    consecutiveLosses++;
-    if(consecutiveLosses%5===0) playSound(soundNewFire);
-  }
-
-  updateUI();
-}
-
-function triggerHollyCaos(winAmt){
-  const overlay=document.getElementById('holly-caos-overlay');
-  const valEl=document.getElementById('holly-counter-val');
-
-  if(bgMusic) bgMusic.volume=0.05;
-  playSound(soundBigWin);
-
-  let winAudioTimeout = setTimeout(() => {
-    if(soundBigWin) {
-      soundBigWin.pause();
-      soundBigWin.currentTime = 0;
-    }
-    if(bgMusic) bgMusic.volume = 0.25;
-  }, 5500);
-
-  overlay.style.display='flex';
-
-  let currentVal=0;
-  let increment=Math.ceil(winAmt/40);
-  let iv=setInterval(()=>{
-    currentVal=Math.min(currentVal+increment, winAmt);
-    valEl.innerText=`+${currentVal} CC`;
-    playSynthCoinSound();
-    if(currentVal>=winAmt){
-      clearInterval(iv);
-      setTimeout(()=>{
-        overlay.style.display='none';
-        credits+=winAmt;
-        updateHistoryUI(winAmt,`HOLLY CAOS!`);
+  let stopDelay = turboMode ? 100 : 300;
+  for(let i=0; i<NREELS; i++){
+    setTimeout(() => {
+      playReelStopSound();
+      renderReels();
+      if(i === NREELS - 1){
+        isSpinning = false;
+        holds.fill(false);
         updateUI();
-      },1200);
-    }
-  },40);
+      }
+    }, (i + 1) * stopDelay);
+  }
 }
 
-function updateHistoryUI(amt,name){
-  lastWinsHistory.unshift({amt,name}); if(lastWinsHistory.length>5) lastWinsHistory.pop();
-  const l=document.getElementById('history-list'); l.innerHTML='';
-  lastWinsHistory.forEach(h=>{ const b=document.createElement('div'); b.className='history-item'; b.innerText=`+${h.amt} (${h.name})`; l.appendChild(b); });
-}
-
-window.addEventListener('keydown',e=>{
+document.addEventListener('keydown', (e) => {
   if(!loggedIn) return;
-  if(e.code==='Space'){ e.preventDefault(); spin(); }
-  if(e.key>='1'&&e.key<='6') toggleHold(parseInt(e.key)-1);
-  const k=e.key.toLowerCase();
-  if(k==='c') setBet((currentBetIndex+1)%bets.length);
-  if(k==='l') setLines((lineIndex+1)%lineOptions.length);
-  if(k==='t') toggleTurbo();
-  if(k==='m') toggleMusic();
+  if(e.code === 'Space'){ e.preventDefault(); spin(); }
+  if(e.code === 'KeyT'){ toggleTurbo(); }
+  if(e.code === 'KeyM'){ toggleMusic(); }
+  if(e.code >= 'Digit1' && e.code <= 'Digit6'){
+    const idx = parseInt(e.code.replace('Digit','')) - 1;
+    toggleHold(idx);
+  }
 });
 
 renderReels();
-updateUI();
 </script>
 </body>
 </html>
