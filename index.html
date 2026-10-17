@@ -402,7 +402,8 @@ function initAudio(){
   }catch(e){ console.warn('Audio init error',e); }
 }
 function playSound(a){ if(a){ try{ a.currentTime=0; a.play().catch(()=>{}); }catch(e){} } }
-function playAlternatingHoldSound(){ initAudio(); playSound(holdSoundToggle?soundHold1:soundHold2); holdSoundToggle=!holdSoundToggle; }
+function playAlternatingHoldSound(){ initAudio(); playSound(holdsoundToggle?soundHold1:soundHold2); holdsoundToggle=!holdsoundToggle; }
+
 
 /* ---------- DANE ---------- */
 const latinQuotes=["Exori Vis Benedictio!","In Nomine Caos, Absolvo!","Virtus Et Gloria In Saecula!","Sanctum Arcanum Exsurge!","Benedictio Ferumbrasi Vobiscum!"];
