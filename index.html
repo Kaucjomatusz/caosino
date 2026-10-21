@@ -251,7 +251,7 @@ body{padding:0 275px}
   <div class="hud-row" id="hud-freeze-row" style="display:none;color:#3498db"><span>❄️ Zamrożenie Salda:</span><span class="hud-badge" id="hud-freeze-spins" style="color:#0ff">5 sp.</span></div>
   <div class="hud-row" id="hud-charge-row" style="display:none;color:#9b59b6"><span>⚙️ Ładowanie maszyny:</span><span class="hud-badge" id="hud-charge-val" style="color:#c39bd3">0%</span></div>
   <div class="hud-row" id="hud-dragon-row" style="display:none;color:#ff7f27"><span>🔥 Ogień smoka +20%:</span><span class="hud-badge" id="hud-dragon-val" style="color:#ff7f27">10 sp.</span></div>
-  <div class="hud-row" id="hud-invasion-row" style="display:none;color:#e74c3c"><span>☣️ INWAZJA MIASTA:</span><span class="hud-badge" id="hud-invasion-spins" style="color:#e74c3c">40 sp.</span></div>
+  <div class="hud-row" id="hud-invasion-row" style="display:none;color:#e74c3c"><span>☣️ INWAZJA MIASTA:</span><span class="hud-badge" id="hud-invasion-spins" style="color:#e74c3c">10 sp.</span></div>
   <div class="hud-title" style="margin-top:4px">Szanse (po przegranym spinie)</div>
   <div class="hud-row"><span>⚔️ Najazd:</span><span class="hud-badge" id="hud-raid-chance" style="color:#e74c3c">0%</span></div>
   <div class="hud-row"><span>🌀 Caos:</span><span class="hud-badge" id="hud-caos-chance" style="color:#0ff">5%</span></div>
@@ -290,7 +290,7 @@ body{padding:0 275px}
     &nbsp;&nbsp;bazowo 0.30% + 0.004% za każdy 1 CC stawki + 0.05% za każdą dodatkową linię (maks. 3%).<br>
     • Po najeździe działa blokada 25 spinów bez kolejnego najazdu.<br>
     • W najeździe wybierasz jedno z 2 zakrytych pól [1]/[2] (50/50): pod jednym jest zwycięstwo (+300 CC), pod drugim klęska. Scarab Amulet gwarantuje zwycięstwo.<br>
-    • Przegrany rajd blokuje bębny grafikami potworów na 40 spinów. <b>Necromancerzy</b> dodatkowo zabierają Ice Cubes i Błogosławieństwa.
+    • Przegrany rajd blokuje bębny grafikami potworów na 10 spinów. <b>Necromancerzy</b> dodatkowo zabierają Ice Cubes i Błogosławieństwa.
   </p>
 
   <div class="info-section-title">🔮 Przedmioty Błogosławieństw (Ferumbras)</div>
@@ -330,9 +330,6 @@ body{padding:0 275px}
 <img id="dragon" src="smok.gif" alt="Smok" onerror="if(!this.dataset.t){this.dataset.t=1;this.src='dragon.gif'}else{this.style.visibility='hidden'}">
 <div id="win-overlay"><img id="win-gif" src="" alt="WYGRANA"></div>
 
-<div class="header-section">
-  <h1 class="logo-title">CAOSino</h1>
-</div>
 
 
 <div class="slot-machine" id="slot-machine"></div>
@@ -402,7 +399,7 @@ function initAudio(){
   }catch(e){ console.warn('Audio init error',e); }
 }
 function playSound(a){ if(a){ try{ a.currentTime=0; a.play().catch(()=>{}); }catch(e){} } }
-function playAlternatingHoldSound(){ initAudio(); playSound(holdsoundToggle?soundHold1:soundHold2); holdsoundToggle=!holdsoundToggle; }
+function playAlternatingHoldSound(){ initAudio(); playSound(holdSoundToggle?soundHold1:soundHold2); holdSoundToggle=!holdSoundToggle; }
 
 
 /* ---------- DANE ---------- */
@@ -654,9 +651,9 @@ function pickRaidCard(i){
     duck(false);
     if(isWin){ credits+=300; initAudio(); playSound(soundWin); triggerNpcSpeech("Zwycięstwo w walce z rajdowcami! Nagroda: +300 CC"); }
     else{
-      invasionSpinsLeft=40; currentInvaderFile=file;
+      invasionSpinsLeft=10; currentInvaderFile=file;
       if(necro){ iceCollectedThisRun=0; scarabCharges=0; hasBlueGem=false; goldRingActive=false; essenceCount=0; triggerNpcSpeech("INWAZJA NECRO: Skradziono Błogosławieństwa i zablokowano bębny!"); }
-      else triggerNpcSpeech("Rotwormy zablokowały bębny maszyny na 40 spinów!");
+      else triggerNpcSpeech("Rotwormy zablokowały bębny maszyny na 10 spinów!");
     }
     updateUI();
   },2600);
