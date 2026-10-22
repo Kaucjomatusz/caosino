@@ -1120,6 +1120,24 @@ window.addEventListener('keydown',e=>{
   const k=e.key.toLowerCase();
   if(k==='c') changeBet(); if(k==='l') changeLines(); if(k==='r') resetCredits(); if(k==='i') toggleInfoModal(); if(k==='m') toggleMusic(); if(k==='t') toggleTurbo(); if(k==='a') cycleAuto();
 });
+  // Ukrywanie filmiku powitalnego po zakończeniu lub po 2 sekundach
+const splashVideo = document.getElementById('splash-video');
+const introSplash = document.getElementById('intro-splash');
+
+function hideIntro() {
+  if (!introSplash || introSplash.style.display === 'none') return;
+  introSplash.style.opacity = '0';
+  setTimeout(() => {
+    introSplash.style.display = 'none';
+    const pinInput = document.getElementById('pin-input');
+    if (pinInput) pinInput.focus();
+  }, 600);
+}
+
+if (splashVideo) {
+  splashVideo.onended = hideIntro;
+}
+setTimeout(hideIntro, 2000);
 </script>
 </body>
 </html>
