@@ -338,6 +338,7 @@ body{padding:0 275px}
 <div class="slot-machine" id="slot-machine"></div>
 
 
+<script src="discord-sdk.js"></script>
 <script>
 const NREELS = 6, NROWS = 5;
 
@@ -1141,6 +1142,24 @@ window.addEventListener('keydown',e=>{
   const k=e.key.toLowerCase();
   if(k==='c') changeBet(); if(k==='l') changeLines(); if(k==='r') resetCredits(); if(k==='i') toggleInfoModal(); if(k==='m') toggleMusic(); if(k==='t') toggleTurbo(); if(k==='a') cycleAuto();
 });
+
+/* ---------- DISCORD ACTIVITY ---------- */
+/* Wklej tu Application ID z Discord Developer Portal (OAuth2 / Informacje ogólne) */
+const DISCORD_CLIENT_ID='1563040130246377574';
+(async function initDiscordActivity(){
+  /* Discord otwiera Activity z parametrem frame_id; w zwykłej przeglądarce nic się nie zmienia */
+  if(!/[?&]frame_id=/.test(location.search)) return;
+  try{
+    const sdk=new DiscordSDK.DiscordSDK(DISCORD_CLIENT_ID);
+    await sdk.ready();
+  }catch(e){ console.warn('Discord SDK:',e); }
+  /* w Discordzie pomijamy ekran PIN */
+  loggedIn=true;
+  const ls=document.getElementById('login-screen'); if(ls) ls.style.display='none';
+  initAudio(); updateUI();
+  /* przeglądarka wymaga kliknięcia, żeby ruszyła muzyka */
+  window.addEventListener('pointerdown',()=>startMusic(),{once:true});
+})();
 </script>
 </body>
 </html>
